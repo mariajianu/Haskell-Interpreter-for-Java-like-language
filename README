@@ -1,0 +1,103 @@
+=================
+JIANU Maria 321CB
+	Tema 1 PP
+=================
+
+	Voi incepe prin a explica cum am gandit reprezentarea tipurilor de date:
+	(am ales sa nu folosesc Data.Map, ci liste de String-uri)
+
+1. ContainerVar este o lista de liste de String-uri de tipul [[varName, className]].
+varName este simbolul variabilei, iar className este clasa care instantiaza variabila
+
+2. ContainerFunct este tot o lista de liste de String-uri de tipul
+[[funcName, returnType, param1, param2..]]
+
+3. ClassState reprezinta toate informatiile despre o clasa si are String (nume), String
+(nume parinte), ContainerVar (lista de variabile), ContainerFunct (lista de functii).
+
+4. Program reprezinta baza noastra de date cu toate informatiile despre toate clasele
+din program si are doar o lista de ClassState-uri
+
+5. Instruction reprezinta fiecare instructiune pe care o primim la parsarea fisierului, 
+adica fiecare linie din fisier.
+
+a) 
+	initEmptyClass intoarce un ClassState care are ambele campuri de nume/numeParinte
+setate ca "null", iar listele de variabile/functii sunt goale
+	
+	insertIntoClass insereaza intr-o clasa primita ca parametru o noua functie sau o
+noua variabila concatenand lista de inserat la lista clasei de variabile/functii.
+
+	getValues doar intoarce lista de variabile/functii. Pentru ca am implementat
+folosing lista de String-uri functia aceasta este foarte simpla, desi alegerea
+de implementare folosind liste poate nu a fost mereu cea mai avantajoasa.
+
+b) 
+	Pentru ca am folosit foarte multe functii ajutatoare nu o sa explic fiecare
+functie din Parser, ci doar pe cele foarte importante.
+	Toate functiile scrise pana la linia in care definesc tipul de date Instruction
+sunt apelate atunci cand parsez inputul fisierului (parse) sau cand populez 
+programul (interpret). Pe langa cele cerute in cerinta am mai adaugat cateva functii
+pentru diferite operatii: obtinerea numelui unei clase, initializarea unei clase
+cu parintele Global sau cu parinte explicit (pentru liniile din fisier de tipul
+"class A (extends B)") etc.
+	Pentru a avea in Instruction fiecare linie din fisier sub forma de String, 
+functia getParts imparte fisierul in String-uri despartite prin caractere de
+control (\n) iar getInstructionList le retine pe toate acestea intr-o lista. 
+	In interpret primesc fiecare linie din fisier si o tratez in functie de
+cazul in care ne aflam:
+
+1. declaratie de clasa
+
+	Atunci, verific daca clasa pe care o declaram se afla deja in program, 
+sau daca clasa pe care clasa o extinde exista in program. In functie de
+aceste rezultate, adaug in program o clasa cu parinte explicit sau o clasa
+cu parintele Global. Daca clasa se afla deja declarata, doar ignor linia.
+
+2. declaratie de variabila
+	
+	Verific daca tipul variabilei se afla in program. Daca se afla, adaug
+in clasa Global variabila (adica in lista clasei de variabile). Daca nu se
+afla in program tipul, atunci ignor linia.
+
+3. declaratie de functie
+	Verific daca functia intoarce un tip cunoscut, daca parametrii primiti de
+functie sunt si ei cunoscuti sau daca clasa de care apartine functia este din
+program. Daca toate aceaste conditii sunt implinite atunci adaug functia in 
+lista de functii a clasei de care apartine. Altfel, linia este ignorata.
+
+	Tot aici a trebuit sa tratez si cazul de input invalid, acest lucru il
+fac functiile de parsare ajutatoare (paramsHelper si checkParams).
+
+c) 
+	Functia infer primste o expresie, cauta tipul ei si il intoarce, sau
+daca expresia era invalida intoarce Nothing. 
+	Pasii pe care i-am urmat sunt:
+- daca expresia e formata doar dintr-o variabila atunci intorc tipul variabilei
+(daca ea exista)
+- daca expresia e formata doar dintr-un apel de functie, atunci apelez functia
+inferSimpleFunct care cauta in program clasa care are functia cu numele primit 
+si intoarce tipul intors de ea. 
+
+	Obeservatii: punctul c nu este complet, deci nu este in totalitate corect. Nu
+am reusit deloc sa verific daca exista functia cu parametrii respectivi, adica 
+daca functia f avea si parametrii (Double,Double) dar si (Int, Int), nu conteaza
+cu ce parametrii e apelata, functia mea intoarce tipul intors de prima functie
+cu numele f gasit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
